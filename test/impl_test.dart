@@ -1,16 +1,15 @@
 library secp256k1cipher.test.impl_test;
 
 import 'dart:convert' as convert;
-import 'dart:io';
 import 'dart:typed_data';
-import 'package:secp256k1_cipher/src/secp256k1Cipher.dart';
+import 'package:kepler/src/secp256k1Cipher.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:secp256k1_cipher/secp256k1cipher.dart';
+import 'package:kepler/secp256k1cipher.dart';
 import "package:pointycastle/ecc/api.dart";
-//import 'package:pointycastle/digests/ripemd160.dart';
+import 'package:pointycastle/digests/ripemd160.dart';
 import "package:pointycastle/pointycastle.dart";
-//import "package:hex/hex.dart";
-//import 'package:base58check/base58.dart';
+import "package:hex/hex.dart";
+import 'package:base58check/base58.dart';
 
 // String _formatBytesAsHexString(Uint8List bytes) {
 //   var result = StringBuffer();
@@ -23,31 +22,29 @@ import "package:pointycastle/pointycastle.dart";
 
 void main() {
   group('Keys', () {
-    // test("genaddr", () {
-    //   Digest sha256 = new Digest("SHA-256");
-    //   Digest ripemd = new RIPEMD160Digest();
-    //   final pubkey = loadPublicKey(
-    //       '50863AD64A87AE8A2FE83C1AF1A8403CB53F53E486D8511DAD8A04887E5B23522CD470243453A299FA9E77237716103ABC11A1DF38855ED6F2EE187E9C582BA6');
-    //   final pub_bytes = pubkey.Q.getEncoded(false);
-    //   final sha_hash = sha256.process(pub_bytes);
-    //   final rip_hash = ripemd.process(sha_hash);
-    //   final hex_hash = HEX.encode(rip_hash.toList());
-    //   print(hex_hash);
+    test("genaddr", () {
+      Digest sha256 = new Digest("SHA-256");
+      Digest ripemd = new RIPEMD160Digest();
+      final pubkey = loadPublicKey(
+          '50863AD64A87AE8A2FE83C1AF1A8403CB53F53E486D8511DAD8A04887E5B23522CD470243453A299FA9E77237716103ABC11A1DF38855ED6F2EE187E9C582BA6');
+      final pubBytes = pubkey.Q!.getEncoded(false);
+      final shaHash = sha256.process(pubBytes);
+      final ripHash = ripemd.process(shaHash);
+      final hexHash = HEX.encode(ripHash.toList());
+      print(hexHash);
 
-    //   // 生成验证
-    //   final network_hash = [0x00] + rip_hash.toList();
-    //   final check1 = sha256.process(Uint8List.fromList(network_hash));
-    //   final check2 = sha256.process(check1);
-    //   final final_check = check2.sublist(0, 4);
-    //   final code_list = network_hash + final_check;
-    //   print(HEX.encode(code_list));
-    //   Base58Encoder b58 = new Base58Encoder(
-    //       '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz');
-    //   final b58_str = b58.convert(code_list);
-    //   print(b58_str);
-    // });
+      final networkHash = [0x00] + ripHash.toList();
+      final check1 = sha256.process(Uint8List.fromList(networkHash));
+      final check2 = sha256.process(check1);
+      final finalCheck = check2.sublist(0, 4);
+      final codeList = networkHash + finalCheck;
+      print(HEX.encode(codeList));
+      Base58Encoder b58 = new Base58Encoder(
+          '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz');
+      final b58Str = b58.convert(codeList);
+      print(b58Str);
+    });
     test('Generate Keys', () {
-      File f = new File('/Users/alex/study/test.csv');
       final lines = [];
       for (var _idx = 0; _idx < 100; _idx++) {
         final keypare = generateKeyPair();
@@ -63,7 +60,7 @@ void main() {
         lines.add(row);
       }
       final txt = lines.join('\n');
-      f.writeAsStringSync(txt);
+      print(txt);
       expect(true, equals(true));
     });
     test('Save and restore private key', () {
@@ -93,22 +90,22 @@ void main() {
         expect(s1, equals(s2));
       }
     });
-    // test('Make request', () async {
-    //   final convert.Utf8Encoder encoder = new convert.Utf8Encoder();
-    //   final remote_pubkey =
-    //       '02be8d8a7b5056de7a7074236100d094ebe86cce33d62469956203022af1f3e556';
-    //   final my_kp = generateKeyPair();
-    //   final data = 'abcdefg';
-    //   final str_pri_key = strinifyPrivateKey(my_kp.privateKey);
-    //   final str_pub_key = strinifyPublicKey(my_kp.publicKey);
-    //   final enced = pubkeyEncryptRaw(str_pri_key, remote_pubkey,
-    //       new Uint8List.fromList(encoder.convert(data)));
-    //   final List<int> dataArr = [];
-    //   data_arr.addAll(encoder.convert(str_pub_key));
-    //   data_arr.addAll(enced['enc'].toList());
-    //   print(convert.base64.encode(data_arr));
-    //   expect(true, true);
-    // });
+    test('Make request', () async {
+      final convert.Utf8Encoder encoder = new convert.Utf8Encoder();
+      final remotePubkey =
+          '02be8d8a7b5056de7a7074236100d094ebe86cce33d62469956203022af1f3e556';
+      final myKP = generateKeyPair();
+      final data = 'abcdefg';
+      final strPrivKey = strinifyPrivateKey(myKP.privateKey as ECPrivateKey);
+      final strPubKey = strinifyPublicKey(myKP.publicKey as ECPublicKey);
+      final enced = pubkeyEncryptRaw(strPrivKey, remotePubkey,
+          new Uint8List.fromList(encoder.convert(data)));
+      final List<int> dataArr = [];
+      dataArr.addAll(encoder.convert(strPubKey));
+      dataArr.addAll(enced['enc'].toList());
+      print(convert.base64.encode(dataArr));
+      expect(true, true);
+    });
     test('Test Decrypt', () async {
       final convert.Utf8Decoder decoder = new convert.Utf8Decoder();
       final myPrivate =
@@ -143,7 +140,7 @@ void main() {
         final alicPrikey =
             '9717f155a64b67e5aa22a9552824237119a373b84ffe62eb435cac6581099767';
         var bob = generateKeyPair();
-        var rawStr = '测试测试测试';
+        var rawStr = 'Very secret stuff here';
         final t1 = new DateTime.now().millisecondsSinceEpoch;
         var encMap = pubkeyEncrypt(alicPrikey,
             strinifyPublicKey(bob.publicKey as ECPublicKey), rawStr);

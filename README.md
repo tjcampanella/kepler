@@ -1,4 +1,4 @@
-# secp256k1_cipher
+# kepler
 This package provides an api for encrypting data using public and private 
 keys created by the secp256k1 elliptic curve. 
 
@@ -6,8 +6,8 @@ This is a fork of [secp256k1Cipher](https://github.com/ipconfiger/secp256k1Ciphe
 
 Example usage.
 ```dart
- // Create Alice's keypair
-
+ 
+  // Create Alice's keypair
   var alice = generateKeyPair();
 
   print(
@@ -38,6 +38,7 @@ Example usage.
   // Get random IV
   var iv = encMap['iv'];
   print("iv: " + iv);
+  
   // Now, you can send enc_str and IV to Bob
 
   // Use bob's privatekey and alice's publickey to decrypt alices message, for Bob to read.
