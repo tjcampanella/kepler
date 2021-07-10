@@ -1,10 +1,10 @@
-library secp256k1cipher.test.impl_test;
+library kepler.test.impl_test;
 
 import 'dart:convert' as convert;
 import 'dart:typed_data';
-import 'package:kepler/src/secp256k1Cipher.dart';
+import 'package:kepler/src/kepler.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kepler/secp256k1cipher.dart';
+import 'package:kepler/kepler.dart';
 import "package:pointycastle/ecc/api.dart";
 import 'package:pointycastle/digests/ripemd160.dart';
 import "package:pointycastle/pointycastle.dart";

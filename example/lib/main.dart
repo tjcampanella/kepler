@@ -1,5 +1,5 @@
 import 'package:pointycastle/pointycastle.dart';
-import 'package:secp256k1_cipher/secp256k1cipher.dart';
+import 'package:kepler/kepler.dart';
 
 void main() {
   // Create Alice's keypair
