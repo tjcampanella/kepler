@@ -161,8 +161,10 @@ ECPoint rawSecret(String privateString, String publicString) {
   final privateKey = loadPrivateKey(privateString);
   final publicKey = loadPublicKey(publicString);
   assert(privateKey.d != null && publicKey.Q != null);
-  final secret =
-      scalarMultiple(privateKey.d!, publicKey.Q!); //publicKey.Q * privateKey.d;
+  final secret = scalarMultiple(
+    privateKey.d!,
+    publicKey.Q!,
+  ); //publicKey.Q * privateKey.d;
   //final secret = publicKey.Q * privateKey.d;
   return secret;
 }
@@ -195,7 +197,10 @@ Map pubkeyEncrypt(String privateString, String publicString, String message) {
 }
 
 Map pubkeyEncryptRaw(
-    String privateString, String publicString, Uint8List data) {
+  String privateString,
+  String publicString,
+  Uint8List data,
+) {
   final secretIV = byteSecret(privateString, publicString);
   final secret = Uint8List.fromList(secretIV[0]);
   final iv = Uint8List.fromList(secretIV[1]);

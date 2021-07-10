@@ -46,7 +46,7 @@ BigInt inverseMod(BigInt k, BigInt p) {
   }
   final gcd = r[2];
   final x = s[2];
-  final y = t[2];
+  // final y = t[2];
   assert(gcd == BigInt.from(1));
   assert((k * x) % p == BigInt.from(1));
   return x % p;

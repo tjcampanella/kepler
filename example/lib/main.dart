@@ -1,28 +1,43 @@
 import 'package:pointycastle/pointycastle.dart';
-import 'package:secp256k1cipher/secp256k1cipher.dart';
+import 'package:secp256k1_cipher/secp256k1cipher.dart';
 
 void main() {
-  var alic = generateKeyPair(); // Create Alic keypair
-  print("priv: " + strinifyPrivateKey(alic.privateKey as ECPrivateKey));
-  print("pub: " + strinifyPublicKey(alic.publicKey as ECPublicKey));
-  print(strinifyPrivateKey(alic.privateKey as ECPrivateKey).length);
-  print(strinifyPublicKey(alic.publicKey as ECPublicKey).length);
-  var bob = generateKeyPair(); // Create Bob keypair
-  var rawStr =
-      'Encrypt and decrypt data use secp256k1'; // This is what alic want to say to bob
+  // Create Alice's keypair
+  var alice = generateKeyPair();
+
+  print("alice private key: " +
+      strinifyPrivateKey(alice.privateKey as ECPrivateKey));
+  print(
+      "alice public key: " + strinifyPublicKey(alice.publicKey as ECPublicKey));
+
+  // Create Bob's keypair
+  var bob = generateKeyPair();
+
+  // This is what alice wants to say to bob
+  var rawStr = 'Encrypt and decrypt data use secp256k1';
+
+  // use alic's privatekey and bob's publickey means alice says to bob
   var encMap = pubkeyEncrypt(
-      strinifyPrivateKey(alic.privateKey as ECPrivateKey),
-      strinifyPublicKey(bob.publicKey as ECPublicKey),
-      rawStr); // use alic's privatekey and bob's publickey means alic say to bob
-  var encStr = encMap['enc']; // Get encrypted base64 string
-  print("encrypted: " + encStr);
-  var iv = encMap['iv']; // Get random IV
-  // next thing, you can send enc_str and IV via internet to bob
+    strinifyPrivateKey(alice.privateKey as ECPrivateKey),
+    strinifyPublicKey(bob.publicKey as ECPublicKey),
+    rawStr,
+  );
+
+  // Get encrypted base64 string
+  var encStr = encMap['enc'];
+  print("encrypted text: " + encStr);
+
+  // Get random IV
+  var iv = encMap['iv'];
+
+  // Now, you can send enc_str and IV to Bob
+
+  // Use bob's privatekey and alice's publickey to decrypt alices message, for Bob to read.
   var decryptd = privateDecrypt(
     strinifyPrivateKey(bob.privateKey as ECPrivateKey),
-    strinifyPublicKey(alic.publicKey as ECPublicKey),
+    strinifyPublicKey(alice.publicKey as ECPublicKey),
     encStr,
     iv,
-  ); // use bob's privatekey and alic's publickey means bob can read message from alic
-  print('alice says: $decryptd');
+  );
+  print('decrypted text: $decryptd');
 }

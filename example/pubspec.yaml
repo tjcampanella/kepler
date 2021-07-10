@@ -23,7 +23,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  secp256k1cipher: 
+  secp256k1_cipher: 
     path: ../
 
 
