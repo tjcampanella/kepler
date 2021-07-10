@@ -1,8 +1,8 @@
-name: secp256k1cipher
-description: Encrypt and decrypt data use secp256k1, This is the High level API build amount pointycastle, specify Elliptic curve to secp256k1 can simplify the api.
+name: secp256k1_cipher
+description: Encrypt and decrypt data use secp256k1, This is the High level API build from pointycastle.
 version: 0.2.2
-author: Alexander.Li<superpowerlee@gmail.com>
-homepage: https://github.com/ipconfiger/secp256k1Cipher
+author: TJ.Campanella<tjcampanella9@gmail.com>
+homepage: https://github.com/tjcampanella/secp256k1Cipher
 
 environment:
   sdk: ">=2.12.0 <3.0.0"

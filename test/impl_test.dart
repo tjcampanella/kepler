@@ -3,23 +3,23 @@ library secp256k1cipher.test.impl_test;
 import 'dart:convert' as convert;
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:secp256k1cipher/src/secp256k1Cipher.dart';
+import 'package:secp256k1_cipher/src/secp256k1Cipher.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:secp256k1cipher/secp256k1cipher.dart';
+import 'package:secp256k1_cipher/secp256k1cipher.dart';
 import "package:pointycastle/ecc/api.dart";
-import 'package:pointycastle/digests/ripemd160.dart';
+//import 'package:pointycastle/digests/ripemd160.dart';
 import "package:pointycastle/pointycastle.dart";
-import "package:hex/hex.dart";
-import 'package:base58check/base58.dart';
+//import "package:hex/hex.dart";
+//import 'package:base58check/base58.dart';
 
-String _formatBytesAsHexString(Uint8List bytes) {
-  var result = StringBuffer();
-  for (var i = 0; i < bytes.lengthInBytes; i++) {
-    var part = bytes[i];
-    result.write('${part < 16 ? '0' : ''}${part.toRadixString(16)}');
-  }
-  return result.toString();
-}
+// String _formatBytesAsHexString(Uint8List bytes) {
+//   var result = StringBuffer();
+//   for (var i = 0; i < bytes.lengthInBytes; i++) {
+//     var part = bytes[i];
+//     result.write('${part < 16 ? '0' : ''}${part.toRadixString(16)}');
+//   }
+//   return result.toString();
+// }
 
 void main() {
   group('Keys', () {

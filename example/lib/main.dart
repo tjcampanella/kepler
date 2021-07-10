@@ -5,6 +5,8 @@ void main() {
   var alic = generateKeyPair(); // Create Alic keypair
   print("priv: " + strinifyPrivateKey(alic.privateKey as ECPrivateKey));
   print("pub: " + strinifyPublicKey(alic.publicKey as ECPublicKey));
+  print(strinifyPrivateKey(alic.privateKey as ECPrivateKey).length);
+  print(strinifyPublicKey(alic.publicKey as ECPublicKey).length);
   var bob = generateKeyPair(); // Create Bob keypair
   var rawStr =
       'Encrypt and decrypt data use secp256k1'; // This is what alic want to say to bob
@@ -13,7 +15,7 @@ void main() {
       strinifyPublicKey(bob.publicKey as ECPublicKey),
       rawStr); // use alic's privatekey and bob's publickey means alic say to bob
   var encStr = encMap['enc']; // Get encrypted base64 string
-  print(encStr);
+  print("encrypted: " + encStr);
   var iv = encMap['iv']; // Get random IV
   // next thing, you can send enc_str and IV via internet to bob
   var decryptd = privateDecrypt(

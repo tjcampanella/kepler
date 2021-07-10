@@ -19,7 +19,7 @@ import "package:pointycastle/src/ufixnum.dart";
 
 class NullSecureRandom extends SecureRandomBase {
   static final FactoryConfig factoryConfig =
-      new StaticFactoryConfig(SecureRandom, "Null", () => NullSecureRandom());
+      StaticFactoryConfig(SecureRandom, "Null", () => NullSecureRandom());
 
   var _nextValue = 0;
 
@@ -48,8 +48,8 @@ String leftPadding(String s, int width) {
 /// return a BTC Address
 String btcAddress(ECPublicKey pubkey) {
   assert(pubkey.Q != null);
-  Digest sha256 = new Digest("SHA-256");
-  Digest ripemd = new RIPEMD160Digest();
+  Digest sha256 = Digest("SHA-256");
+  Digest ripemd = RIPEMD160Digest();
   final pubBytes = pubkey.Q!.getEncoded(false);
   final shaHash = sha256.process(pubBytes);
   final ripHash = ripemd.process(shaHash);
@@ -59,7 +59,7 @@ String btcAddress(ECPublicKey pubkey) {
   final check2 = sha256.process(check1);
   final finalCheck = check2.sublist(0, 4);
   final codeList = networkHash + finalCheck;
-  Base58Encoder b58 = new Base58Encoder(
+  Base58Encoder b58 = Base58Encoder(
     '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz',
   );
   return b58.convert(codeList);
@@ -98,11 +98,10 @@ String strinifyPublicKey(ECPublicKey publicKey) {
 
 String privateSign(String strPrivateKey, String message) {
   ECPrivateKey privateKey = loadPrivateKey(strPrivateKey);
-  ECDSASigner singer = new ECDSASigner(SHA512Digest(), new Mac('SHA-512/HMAC'));
-  var privParams = new PrivateKeyParameter(
-      new ECPrivateKey(privateKey.d, privateKey.parameters));
-  var signParams =
-      () => new ParametersWithRandom(privParams, new NullSecureRandom());
+  ECDSASigner singer = ECDSASigner(SHA512Digest(), Mac('SHA-512/HMAC'));
+  var privParams =
+      PrivateKeyParameter(ECPrivateKey(privateKey.d, privateKey.parameters));
+  var signParams = () => ParametersWithRandom(privParams, NullSecureRandom());
   singer.init(true, signParams());
   ECSignature signature =
       singer.generateSignature(Uint8List.fromList(convert.utf8.encode(message)))
@@ -116,17 +115,16 @@ String privateSign(String strPrivateKey, String message) {
 
 bool publicVerify(String strPublicKey, String message, String strSignature) {
   ECPublicKey publicKey = loadPublicKey(strPublicKey);
-  ECDSASigner verifySinger =
-      new ECDSASigner(SHA512Digest(), new Mac('SHA-512/HMAC'));
-  var pubkeyParam = new PublicKeyParameter(
-      new ECPublicKey(publicKey.Q, publicKey.parameters));
+  ECDSASigner verifySinger = ECDSASigner(SHA512Digest(), Mac('SHA-512/HMAC'));
+  var pubkeyParam =
+      PublicKeyParameter(ECPublicKey(publicKey.Q, publicKey.parameters));
 
   final strR = strSignature.substring(0, 64);
   final strS = strSignature.substring(64, 128);
   final r = BigInt.parse(strR, radix: 16);
   final s = BigInt.parse(strS, radix: 16);
 
-  ECSignature signature = new ECSignature(r, s);
+  ECSignature signature = ECSignature(r, s);
   verifySinger.init(false, pubkeyParam);
   return verifySinger.verifySignature(
       Uint8List.fromList(convert.utf8.encode(message)), signature);
@@ -136,7 +134,7 @@ bool publicVerify(String strPublicKey, String message, String strSignature) {
 ECPrivateKey loadPrivateKey(String storedkey) {
   final d = BigInt.parse(storedkey, radix: 16);
   final param = ECCurve_secp256k1();
-  return new ECPrivateKey(d, param);
+  return ECPrivateKey(d, param);
 }
 
 /// return a publicKey from hex string
@@ -149,12 +147,12 @@ ECPublicKey loadPublicKey(String storedkey) {
       codeList.add(int.parse(hexStr, radix: 16));
     }
     final Q = param.curve.decodePoint(codeList);
-    return new ECPublicKey(Q, param);
+    return ECPublicKey(Q, param);
   } else {
     final x = BigInt.parse(storedkey.substring(0, 64), radix: 16);
     final y = BigInt.parse(storedkey.substring(64), radix: 16);
     final Q = param.curve.createPoint(x, y);
-    return new ECPublicKey(Q, param);
+    return ECPublicKey(Q, param);
   }
 }
 
@@ -189,7 +187,7 @@ List<List<int>> byteSecret(String privateString, String publicString) {
 
 /// Encrypt data using target public key
 Map pubkeyEncrypt(String privateString, String publicString, String message) {
-  convert.Utf8Encoder encoder = new convert.Utf8Encoder();
+  convert.Utf8Encoder encoder = convert.Utf8Encoder();
   final enced = pubkeyEncryptRaw(privateString, publicString,
       Uint8List.fromList(encoder.convert(message)));
   //print('enced:${enced["enc"]}');
@@ -216,7 +214,7 @@ String privateDecrypt(
   Uint8List encdData = convert.base64.decode(b64encoded);
   final rawData =
       privateDecryptRaw(privateString, publicString, encdData, b64IV);
-  convert.Utf8Decoder decode = new convert.Utf8Decoder();
+  convert.Utf8Decoder decode = convert.Utf8Decoder();
   return decode.convert(rawData.toList());
 }
 
