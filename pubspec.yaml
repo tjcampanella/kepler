@@ -1,6 +1,6 @@
 name: secp256k1_cipher
 description: Encrypt and decrypt data use secp256k1, This is the High level API build from pointycastle. A fork of secp256k1Cipher
-version: 0.2.2
+version: 1.0.0
 author: TJ.Campanella<tjcampanella9@gmail.com>
 homepage: https://github.com/tjcampanella/secp256k1Cipher
 
