@@ -3,7 +3,7 @@ Encrypt and decrypt data use secp256k1. This is a fork of [secp256k1Cipher](http
 
 
 Example usage.
-```
+```dart
  // Create Alice's keypair
 
   var alice = generateKeyPair();
