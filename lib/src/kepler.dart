@@ -8,7 +8,6 @@ import "package:pointycastle/api.dart";
 import "package:pointycastle/ecc/api.dart";
 import "package:pointycastle/ecc/curves/secp256k1.dart";
 import "package:pointycastle/random/fortuna_random.dart";
-import 'package:pointycastle/stream/salsa20.dart';
 import 'package:hex/hex.dart';
 import 'package:base58check/base58.dart';
 import 'package:pointycastle/digests/ripemd160.dart';
@@ -164,7 +163,7 @@ ECPoint rawSecret(String privateString, String publicString) {
   final secret = scalarMultiple(
     privateKey.d!,
     publicKey.Q!,
-  ); //publicKey.Q * privateKey.d;
+  );
   //final secret = publicKey.Q * privateKey.d;
   return secret;
 }
@@ -178,11 +177,12 @@ List<List<int>> byteSecret(String privateString, String publicString) {
   final hexX = leftPadding(xs, 64);
   final hexY = leftPadding(ys, 64);
   final secretBytes = Uint8List.fromList(HEX.decode('$hexX$hexY'));
+  print(secretBytes.length);
   final pair = [
-    secretBytes.getRange(0, 32).toList(),
-    secretBytes.getRange(32, 40).toList()
+    secretBytes.sublist(0, 32),
+    secretBytes.sublist(32, 40),
   ];
-  //print(secret_bytes);
+  //print(secretBytes.length);
   //print(pair);
   return pair;
 }
@@ -196,6 +196,16 @@ Map pubkeyEncrypt(String privateString, String publicString, String message) {
   return {'enc': convert.base64.encode(enced['enc']), 'iv': enced['iv']};
 }
 
+// Uint8List _processBlocks(Uint8List input, BlockCipher cipher) {
+//   var output = Uint8List(input.lengthInBytes);
+
+//   for (int offset = 0; offset < input.lengthInBytes;) {
+//     offset += cipher.processBlock(input, offset, output, offset);
+//   }
+
+//   return output;
+// }
+
 Map pubkeyEncryptRaw(
   String privateString,
   String publicString,
@@ -206,6 +216,7 @@ Map pubkeyEncryptRaw(
   final iv = Uint8List.fromList(secretIV[1]);
   //print('s:${secret} iv:${iv}');
   Salsa20Engine _cipher = Salsa20Engine();
+  //PaddedBlockCipher _cipher = PaddedBlockCipher("AES/SIC/PKCS7");
   _cipher.reset();
   _cipher.init(true, _buildParams(secret, iv));
   final Uint8List encData = _cipher.process(data);
@@ -232,10 +243,18 @@ Uint8List privateDecryptRaw(
       ? convert.base64.decode(b64IV)
       : Uint8List.fromList(secretIV[1]);
   Salsa20Engine _cipher = Salsa20Engine();
+  //PaddedBlockCipher _cipher = PaddedBlockCipher("AES/SIC/PKCS7");
   _cipher.reset();
   _cipher.init(false, _buildParams(secret, iv));
   return _cipher.process(encdData);
 }
+
+// PaddedBlockCipherParameters _buildParamsPadded(Uint8List key, Uint8List iv) {
+//   return PaddedBlockCipherParameters(
+//     ParametersWithIV<KeyParameter>(KeyParameter(key), iv),
+//     null,
+//   );
+// }
 
 ParametersWithIV<KeyParameter> _buildParams(Uint8List key, Uint8List iv) {
   return ParametersWithIV<KeyParameter>(KeyParameter(key), iv);

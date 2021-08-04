@@ -1,15 +1,15 @@
 library kepler.test.impl_test;
 
-import 'dart:convert' as convert;
 import 'dart:typed_data';
+import 'dart:convert' as convert;
+import 'package:base58check/base58.dart';
+import 'package:hex/hex.dart';
 import 'package:kepler/src/kepler.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:pointycastle/digests/ripemd160.dart';
+import 'package:test/test.dart';
 import 'package:kepler/kepler.dart';
 import "package:pointycastle/ecc/api.dart";
-import 'package:pointycastle/digests/ripemd160.dart';
 import "package:pointycastle/pointycastle.dart";
-import "package:hex/hex.dart";
-import 'package:base58check/base58.dart';
 
 // String _formatBytesAsHexString(Uint8List bytes) {
 //   var result = StringBuffer();
@@ -23,8 +23,8 @@ import 'package:base58check/base58.dart';
 void main() {
   group('Keys', () {
     test("genaddr", () {
-      Digest sha256 = new Digest("SHA-256");
-      Digest ripemd = new RIPEMD160Digest();
+      Digest sha256 = Digest("SHA-256");
+      Digest ripemd = RIPEMD160Digest();
       final pubkey = loadPublicKey(
           '50863AD64A87AE8A2FE83C1AF1A8403CB53F53E486D8511DAD8A04887E5B23522CD470243453A299FA9E77237716103ABC11A1DF38855ED6F2EE187E9C582BA6');
       final pubBytes = pubkey.Q!.getEncoded(false);
@@ -140,7 +140,7 @@ void main() {
         final alicPrikey =
             '9717f155a64b67e5aa22a9552824237119a373b84ffe62eb435cac6581099767';
         var bob = generateKeyPair();
-        var rawStr = 'Very secret stuff here';
+        var rawStr = 'Very secret stuff in this string of text';
         final t1 = new DateTime.now().millisecondsSinceEpoch;
         var encMap = pubkeyEncrypt(alicPrikey,
             strinifyPublicKey(bob.publicKey as ECPublicKey), rawStr);
@@ -153,8 +153,8 @@ void main() {
           encStr,
           iv,
         );
-        print('d:$decryptd');
-        expect(rawStr, equals(decryptd));
+        //print('d:$decryptd');
+        expect(decryptd, equals(rawStr));
       }
       print('avg: ${microSeconds / 100} ms');
     });
