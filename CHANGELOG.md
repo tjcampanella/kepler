@@ -3,6 +3,8 @@ Changelog
 
 ### Version 1.0.1 (2021-08-04)
 * 1. Switched flutter_test dev dependency for test dev dependency
+* 2. Updated pointycastle version to latest
+
 
 ### Version 1.0.0 (2021-07-10)
 * 1. Initial release of forked repo.

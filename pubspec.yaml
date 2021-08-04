@@ -8,7 +8,7 @@ environment:
 
 dependencies:
   # Newest version of pc doesn't work on web will update once that is fixed.
-  pointycastle: 3.1.2
+  pointycastle: ^3.2.0
   hex: ^0.2.0
   base58check: ^2.0.0
 
