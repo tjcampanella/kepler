@@ -1,6 +1,10 @@
 Changelog
 =========
 
+### Version 1.0.2 (2022-01-25)
+* 1. Changed functions to be static methods of class Kepler
+* 2. Updated pointycastle version to latest
+
 ### Version 1.0.1 (2021-08-04)
 * 1. Switched flutter_test dev dependency for test dev dependency
 * 2. Updated pointycastle version to latest

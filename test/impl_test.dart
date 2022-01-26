@@ -8,24 +8,14 @@ import 'package:kepler/src/kepler.dart';
 import 'package:pointycastle/digests/ripemd160.dart';
 import 'package:test/test.dart';
 import 'package:kepler/kepler.dart';
-import "package:pointycastle/ecc/api.dart";
 import "package:pointycastle/pointycastle.dart";
-
-// String _formatBytesAsHexString(Uint8List bytes) {
-//   var result = StringBuffer();
-//   for (var i = 0; i < bytes.lengthInBytes; i++) {
-//     var part = bytes[i];
-//     result.write('${part < 16 ? '0' : ''}${part.toRadixString(16)}');
-//   }
-//   return result.toString();
-// }
 
 void main() {
   group('Keys', () {
     test("genaddr", () {
       Digest sha256 = Digest("SHA-256");
       Digest ripemd = RIPEMD160Digest();
-      final pubkey = loadPublicKey(
+      final pubkey = Kepler.loadPublicKey(
           '50863AD64A87AE8A2FE83C1AF1A8403CB53F53E486D8511DAD8A04887E5B23522CD470243453A299FA9E77237716103ABC11A1DF38855ED6F2EE187E9C582BA6');
       final pubBytes = pubkey.Q!.getEncoded(false);
       final shaHash = sha256.process(pubBytes);
@@ -44,15 +34,16 @@ void main() {
       final b58Str = b58.convert(codeList);
       print(b58Str);
     });
+
     test('Generate Keys', () {
       final lines = [];
       for (var _idx = 0; _idx < 100; _idx++) {
-        final keypare = generateKeyPair();
+        final keypare = Kepler.generateKeyPair();
         final ECPublicKey pubkey = keypare.publicKey as ECPublicKey;
         final ECPrivateKey prikey = keypare.privateKey as ECPrivateKey;
         final line = [
-          strinifyPublicKey(pubkey),
-          strinifyPrivateKey(prikey),
+          Kepler.strinifyPublicKey(pubkey),
+          Kepler.strinifyPrivateKey(prikey),
           pubkey.Q!.x!.toBigInteger()!.toRadixString(16),
           pubkey.Q!.y!.toBigInteger()!.toRadixString(16)
         ];
@@ -70,7 +61,7 @@ void main() {
           '02766171786852c788bfac4622b302b1c42ca77e3bfdabc56454a4ca5647ac4eba';
       final enc = 'd5dTsgku25ylogZ7Yjs=';
       final iv = 'MRz0cLx8QL4=';
-      final raw = privateDecrypt(localPrivate, remotePublic, enc, iv);
+      final raw = Kepler.privateDecrypt(localPrivate, remotePublic, enc, iv);
       print('raw: $raw');
     });
     test('Save and restore public key', () async {
@@ -79,12 +70,12 @@ void main() {
             '3d6b2142489ffa6d221da41e75e6c08a44a8d0e682b9fa6d768594d94da2adeeb85e248fa05dedcc4f95c32ab8707bb0ba579fd4b41bf28a0df5bfd7f731b809';
         final alicPrikey =
             '462c58255c68a0a1c1b5c89baa99688c81760169ed8c1502d53e50a820aed90a';
-        final bob = generateKeyPair();
+        final bob = Kepler.generateKeyPair();
         print('success idx: $_idx');
-        final s1 = rawSecret(
-            alicPrikey, strinifyPublicKey(bob.publicKey as ECPublicKey));
-        final s2 = rawSecret(
-          strinifyPrivateKey(bob.privateKey as ECPrivateKey),
+        final s1 = Kepler.rawSecret(
+            alicPrikey, Kepler.strinifyPublicKey(bob.publicKey as ECPublicKey));
+        final s2 = Kepler.rawSecret(
+          Kepler.strinifyPrivateKey(bob.privateKey as ECPrivateKey),
           alicPubkey,
         );
         expect(s1, equals(s2));
@@ -94,11 +85,12 @@ void main() {
       final convert.Utf8Encoder encoder = new convert.Utf8Encoder();
       final remotePubkey =
           '02be8d8a7b5056de7a7074236100d094ebe86cce33d62469956203022af1f3e556';
-      final myKP = generateKeyPair();
+      final myKP = Kepler.generateKeyPair();
       final data = 'abcdefg';
-      final strPrivKey = strinifyPrivateKey(myKP.privateKey as ECPrivateKey);
-      final strPubKey = strinifyPublicKey(myKP.publicKey as ECPublicKey);
-      final enced = pubkeyEncryptRaw(strPrivKey, remotePubkey,
+      final strPrivKey =
+          Kepler.strinifyPrivateKey(myKP.privateKey as ECPrivateKey);
+      final strPubKey = Kepler.strinifyPublicKey(myKP.publicKey as ECPublicKey);
+      final enced = Kepler.pubkeyEncryptRaw(strPrivKey, remotePubkey,
           new Uint8List.fromList(encoder.convert(data)));
       final List<int> dataArr = [];
       dataArr.addAll(encoder.convert(strPubKey));
@@ -115,7 +107,7 @@ void main() {
       final rawData = convert.base64.decode(message);
       final pubKey = decoder.convert(rawData.getRange(0, 66).toList());
       final payload = rawData.getRange(66, rawData.length).toList();
-      final decrypted = privateDecryptRaw(
+      final decrypted = Kepler.privateDecryptRaw(
         myPrivate,
         pubKey,
         Uint8List.fromList(payload),
@@ -123,15 +115,18 @@ void main() {
       print("raw message=${decoder.convert(decrypted)}");
       expect(true, true);
     });
+
     test('Sign and Verify', () {
-      final alice = generateKeyPair();
+      final alice = Kepler.generateKeyPair();
       final message = "Mary has a little sheep";
-      final alicePubkey = strinifyPublicKey(alice.publicKey as ECPublicKey);
+      final alicePubkey =
+          Kepler.strinifyPublicKey(alice.publicKey as ECPublicKey);
       final alicePrivatekey =
-          strinifyPrivateKey(alice.privateKey as ECPrivateKey);
-      final signature = privateSign(alicePrivatekey, message);
-      expect(true, publicVerify(alicePubkey, message, signature));
+          Kepler.strinifyPrivateKey(alice.privateKey as ECPrivateKey);
+      final signature = Kepler.privateSign(alicePrivatekey, message);
+      expect(true, Kepler.publicVerify(alicePubkey, message, signature));
     });
+
     test('Encrypt and Decrypt', () {
       int microSeconds = 0;
       for (var i = 0; i < 10; i++) {
@@ -139,21 +134,20 @@ void main() {
             '5cb38e0c76f2b28e112e78d96d46e79b04585f17c3bb81a11ad3ad327d9ccaf815b0d2c770fd31c7224671378d7129cdd3dba97ca1efd016e2a580048c6eec46';
         final alicPrikey =
             '9717f155a64b67e5aa22a9552824237119a373b84ffe62eb435cac6581099767';
-        var bob = generateKeyPair();
+        var bob = Kepler.generateKeyPair();
         var rawStr = 'Very secret stuff in this string of text';
         final t1 = new DateTime.now().millisecondsSinceEpoch;
-        var encMap = pubkeyEncrypt(alicPrikey,
-            strinifyPublicKey(bob.publicKey as ECPublicKey), rawStr);
+        var encMap = Kepler.pubkeyEncrypt(alicPrikey,
+            Kepler.strinifyPublicKey(bob.publicKey as ECPublicKey), rawStr);
         microSeconds += (DateTime.now().millisecondsSinceEpoch - t1);
         var encStr = encMap['enc'];
         var iv = encMap['iv'];
-        var decryptd = privateDecrypt(
-          strinifyPrivateKey(bob.privateKey as ECPrivateKey),
+        var decryptd = Kepler.privateDecrypt(
+          Kepler.strinifyPrivateKey(bob.privateKey as ECPrivateKey),
           alicPubkey,
           encStr,
           iv,
         );
-        //print('d:$decryptd');
         expect(decryptd, equals(rawStr));
       }
       print('avg: ${microSeconds / 100} ms');

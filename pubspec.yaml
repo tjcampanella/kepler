@@ -1,14 +1,13 @@
 name: kepler
 description: Encrypt and decrypt data using secp256k1, This is the High level API build from pointycastle. A fork of secp256k1Cipher.
-version: 1.0.1
+version: 1.0.2
 homepage: https://github.com/tjcampanella/kepler
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
-  # Newest version of pc doesn't work on web will update once that is fixed.
-  pointycastle: ^3.2.0
+  pointycastle: ^3.5.0
   hex: ^0.2.0
   base58check: ^2.0.0
 
