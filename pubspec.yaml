@@ -1,15 +1,16 @@
 name: kepler
-description: Encrypt and decrypt data using secp256k1, This is the High level API build from pointycastle. A fork of secp256k1Cipher.
-version: 1.0.2
+description: Encrypt and decrypt data using the secp256k1 elliptic curve. This is the High level API build from pointycastle. A fork of secp256k1Cipher.
+version: 1.0.3
 homepage: https://github.com/tjcampanella/kepler
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
-  pointycastle: ^3.5.0
+  pointycastle: ^3.6.0
   hex: ^0.2.0
   base58check: ^2.0.0
 
 dev_dependencies:
+  flutter_lints:
   test:

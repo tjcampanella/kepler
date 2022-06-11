@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:pointycastle/pointycastle.dart';
 import 'package:kepler/kepler.dart';
 
@@ -30,11 +32,11 @@ void main() {
 
   // Get encrypted base64 string
   var encStr = encMap['enc'];
-  print("encrypted text: " + encStr);
+  print("encrypted text: " + encStr!);
 
   // Get random IV
   var iv = encMap['iv'];
-  print("iv: " + iv);
+  print("iv: " + iv!);
   // Now, you can send enc_str and IV to Bob
 
   // Use bob's privatekey and alice's publickey to decrypt alices message, for Bob to read.

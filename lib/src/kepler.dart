@@ -1,3 +1,5 @@
+// ignore_for_file: implementation_imports
+
 import "dart:typed_data";
 import "dart:math";
 import 'dart:convert' as convert;
@@ -15,10 +17,13 @@ class NullSecureRandom extends SecureRandomBase {
 
   var _nextValue = 0;
 
+  @override
   String get algorithmName => "Null";
 
+  @override
   void seed(CipherParameters params) {}
 
+  @override
   int nextUint8() => clip8(_nextValue++);
 }
 
@@ -32,7 +37,7 @@ class Kepler {
   }
 
   static String leftPadding(String s, int width) {
-    final paddingData = '000000000000000';
+    const paddingData = '000000000000000';
     final paddingWidth = width - s.length;
     if (paddingWidth < 1) {
       return s;
@@ -53,7 +58,7 @@ class Kepler {
     final check2 = sha256.process(check1);
     final finalCheck = check2.sublist(0, 4);
     final codeList = networkHash + finalCheck;
-    Base58Encoder b58 = Base58Encoder(
+    Base58Encoder b58 = const Base58Encoder(
       '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz',
     );
     return b58.convert(codeList);
@@ -92,8 +97,9 @@ class Kepler {
     ECDSASigner singer = ECDSASigner(SHA512Digest(), Mac('SHA-512/HMAC'));
     var privParams =
         PrivateKeyParameter(ECPrivateKey(privateKey.d, privateKey.parameters));
-    var signParams = () => ParametersWithRandom(privParams, NullSecureRandom());
-    singer.init(true, signParams());
+    ParametersWithRandom signParams =
+        ParametersWithRandom(privParams, NullSecureRandom());
+    singer.init(true, signParams);
     ECSignature signature = singer.generateSignature(
         Uint8List.fromList(convert.utf8.encode(message))) as ECSignature;
     final xs = signature.r.toRadixString(16);
@@ -179,18 +185,18 @@ class Kepler {
   }
 
   /// Encrypt data using target public key
-  static Map pubkeyEncrypt(
+  static Map<String, String> pubkeyEncrypt(
     String privateString,
     String publicString,
     String message,
   ) {
-    convert.Utf8Encoder encoder = convert.Utf8Encoder();
+    convert.Utf8Encoder encoder = const convert.Utf8Encoder();
     final enced = pubkeyEncryptRaw(privateString, publicString,
         Uint8List.fromList(encoder.convert(message)));
     return {'enc': convert.base64.encode(enced['enc']), 'iv': enced['iv']};
   }
 
-  static Map pubkeyEncryptRaw(
+  static Map<String, dynamic> pubkeyEncryptRaw(
     String privateString,
     String publicString,
     Uint8List data,
@@ -212,7 +218,7 @@ class Kepler {
     Uint8List encdData = convert.base64.decode(b64encoded);
     final rawData =
         privateDecryptRaw(privateString, publicString, encdData, b64IV);
-    convert.Utf8Decoder decode = convert.Utf8Decoder();
+    convert.Utf8Decoder decode = const convert.Utf8Decoder();
     return decode.convert(rawData.toList());
   }
 

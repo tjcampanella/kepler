@@ -1,6 +1,10 @@
 Changelog
 =========
 
+### Version 1.0.3 (2022-06-11)
+* 1. Bumped packages to latest
+* 2. Added strict linting rules 
+
 ### Version 1.0.2 (2022-01-25)
 * 1. Changed functions to be static methods of class Kepler
 * 2. Updated pointycastle version to latest

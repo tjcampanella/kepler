@@ -24,7 +24,7 @@ bool isOnCurve(ECPoint point) {
 
 BigInt inverseMod(BigInt k, BigInt p) {
   if (k.compareTo(BigInt.zero) == 0) {
-    throw IntegerDivisionByZeroException();
+    throw Exception("Cannot Divide By 0");
   }
   if (k < BigInt.from(0)) {
     return p - inverseMod(-k, p);
@@ -80,14 +80,14 @@ ECPoint pointAdd(ECPoint? point1, ECPoint? point2) {
   // if (x1 == x2 && y1 != y2) {
   //   return null;
   // }
-  var m;
+  BigInt m;
   if (x1 == x2) {
     m = (BigInt.from(3) * x1! * x1 + point1.curve.a!.toBigInteger()!) *
         inverseMod(BigInt.from(2) * y1!, theP);
   } else {
     m = (y1! - y2!) * inverseMod(x1! - x2!, theP);
   }
-  final x3 = m * m - x1 - x2;
+  final x3 = m * m - x1 - x2!;
   final y3 = y1 + m * (x3 - x1);
   ECPoint result = point1.curve.createPoint(x3 % theP, -y3 % theP);
   assert(isOnCurve(result));

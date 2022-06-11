@@ -1,4 +1,4 @@
-# kepler
+# Kepler
 This package provides an api for encrypting data using public and private 
 keys created by the secp256k1 elliptic curve. 
 
